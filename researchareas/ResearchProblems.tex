@@ -9,9 +9,9 @@
 %\usepackage{latex8}
 %\usepackage{times}
 %\pagestyle{empty}
-\usepackage{epsfig}
-\def\BibTeX{{\rm B\kern-.05em{\sc i\kern-.025em b}\kern-.08em
-    T\kern-.1667em\lower.7ex\hbox{E}\kern-.125emX}}
+%\usepackage{epsfig}
+%\def\BibTeX{{\rm B\kern-.05em{\sc i\kern-.025em b}\kern-.08em
+%    T\kern-.1667em\lower.7ex\hbox{E}\kern-.125emX}}
     
 \bibliographystyle{IEEEtran}
 \graphicspath{./imaages/}
@@ -46,7 +46,7 @@ Since the mid 2010's we have seen significant shifting of traditional brick-and-
 
 It seems while everybody is embracing the cloud computing model, little attention has been paid to ways that mature software engineering practices needed to move to this new computing model at scale. Early successes by technology startups, or by industry moving their existing suite of web and mobile services over to the cloud are now being followed with ambitious plans to move more of their core business to the cloud, and to innovate new products and services that could only be delivered in the cloud.
 
-While there is a significant research activity in many areas of cloud computing, little attention has been paid to the needs of the software engineering professional.  This paper will focus on the landscape of Cloud Native Software Engineering from a practitioners standpoint, and attempt to identify some research opportunities in this space.
+While there is a significant research activity in many areas of cloud computing, little attention has been paid to the needs of the software engineering professional.  This paper will focus on the landscape of Cloud Native Software Engineering from a practitioners standpoint, and  identify some opportunities in this space that should be investigated by the research community.
 \end{abstract}  
 
 \section{Introduction}
@@ -67,12 +67,12 @@ We think a better definition of cloud native computing that focuses more on  sof
 	
 	\item  \textbf{Container Packaged} - The term \textit{container} is overloaded in the cloud computing terminology landscape.  In many places its equated to a standardized package that is managed by Docker\cite{DockerContainer} technologies - aka "a docker container".  We take a more generic view of container packaging. Specifically, we think container packaging is a mechanism to package and deploy code that is ephemeral, can operate across a variety of different hardware architectures (e.g., Intel, ARM, etc), and at runtime is supervised.  Supervision includes full lifecycle management associated with version identification, startup, shutdown, health checks, and monitoring.  Examples of container packaging and supervision include Docker, Docker Compose, Kubernetes, and serverless \cite{baldini2017serverless}. We also include in this category the emerging popularity of using server-side web assembly\cite{haas2017bringing, bosshard2020use} as a way to package and deploy cloud native application services. 
 
-	\item \textbf{Dynamically Managed} - One interesting conceptual model for cloud computing is to consider the cloud as a large, highly distributed, special purpose operating system. Just like any operating system, there are a number of resource types that need to be provided to applications like storage, compute, network and security services.  The job of an operating system is to dynamically manage and optimize the allocation of these resources to the realtime computing demand.  When done well, every process being managed by the OS will perceive that it has access to the resources it needs, when it needs it.  In a similiar context, a cloud service provider can be 
+	\item \textbf{Dynamically Managed} - One interesting conceptual model for cloud computing is to consider the cloud as a large, highly distributed, special purpose operating system. Just like any operating system, there are a number of resource like storage, compute, network and security services that are needed by applications.  The job of an operating system is to dynamically manage and optimize the allocation of these resources to the realtime computing demand on the system.  When done well, every process being managed by the OS will perceive that it has access to the resources it needs, when it needs it.  In a similar context, a cloud service provider, via Application Programming Interfaces (APIs), provides and manages resources to cloud native applications dynamically. What is generally different is that an OS manages physical resources on a system, whereas cloud resources are generally virtualized and distributed, and to a large degree fault-tolerant.  For example, block storage that supports virtual machine reads and writes are automatically replicated across servers within an availability zone. Outside of initial configuration, the user does not worry about how durability is provided given its dynamically managed by the cloud service provider. 
 	
-	
-	\item 
 	 
 \end{itemize} 
+
+Now that we have provided a definition, there are a number of interesting software engineering problems that should be considered. 
 
 
 b
