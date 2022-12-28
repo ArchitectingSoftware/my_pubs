@@ -75,45 +75,37 @@ We think a better definition of cloud native computing that focuses more on  sof
 Now that we have provided a definition, there are a number of interesting software engineering problems that should be considered. 
 
 
-b
-v
-v
-v
-v
+\section{The Architectural Span of the Cloud}
+\label{sec:CloudArchitecture}
+The infrastructure architecture that the major cloud providers offer to their customers continues to expand and evolve.  These advancements provide significant innovation capabilities to their customers, but also put pressure on how to effectively engineer solutions that take advantage of these services cost effectively.  Figure \ref{fig:CloudTopo} shows the high level view of the modern cloud.  While it was once easy to identify the boundary of where the cloud began and ended, it is no longer easy to define the edge of the cloud.  The following sections will provide an overview of the evolution of the cloud, along with highlighting some of the challenges that have to be overcome by software engineers to effectively use cloud computing services.
 
-v
-vv
+\subsection{Foundational Cloud Architecture}
+The basic cloud architecture topology deployed by the major providers exhibit a lot of similarities\footnote{It should be noted that the terminology used by the major cloud providers differs slightly for things like availability zones and regions.}.  The foundational building block of cloud compute is often called an \textbf{Availability Zone} (AZ).  An AZ is a data center that hosts cloud infrastructure (compute, storage, and network) and runs cloud provider services.  A \textbf{Region} is a physical location where a collection of 2 or more AZs are located.  Each AZ within a region are connected together with a fully redundant high bandwidth low latency network.  The goal of a region is to have AZs close enough so that they can behave like a single cluster, but also separate them by enough distance to isolate them from issues associated with power failure, earthquakes, tornados, and so on.  AWS, as an example, uses the general guideline of 100km (60 miles)\cite{AWS-AZ} for placing AZs within a region. The global footprint of a cloud provider is defined by the number of regions and locations they have across the globe, along with the purpose-built underlying network they use to interconnect them together. The far right side of Figure \ref{fig:CloudTopo} shows where Regions and AZs fit into the modern cloud architecture.
 
-v
-vv
-vv
-v
+The Region/AZ architecture, coupled with a pay-as-you-go model, offered services, scale and financial benefits that disrupted compute.  The largest companies in the world do not want to be in the business of managing a global network of interconnected data centers. For smaller companies and individual entrepreneurs, this model enabled them to have access to compute resources once only available to large enterprises, for zero up front cost.  One could easily argue that cloud computing was largely responsible for the explosion in startup companies over the past 15-20 years. 
 
-v
-vv
-vv
-vvv
-v
+From a software engineering perspective, the basic cloud architecture introduces additinal congnative load on 
 
-v
-vv
+\begin{itemize}
+	\item Planning application deployment starts with the design of a virtual data center. Traditional software engineers are not trained to think of the start of the design process begins with the assignment of a network CIDR block. 
+	
+	\item Quality attributes such as privacy, resiliency, reliability and scalability are foundational concepts that software architects use to reason about systems.  These now move out of the conceptual realm and require a deeper understanding of network constructs that now become part of the software design itself.  For example, deploying microservices across different subnets, where each subnet is in a different AZ within a region. Also, declarative definition of  the security policies that govern access to these microservices along with their entitlements to access other cloud resources. 
+	
+	\item Although the cloud itself provides an infrastructure model to support creating resilient solutions that run at scale, its up to the software engineer to build things properly to take advantage of these capabilities\footnote{Some patterns such as rehosting\cite{engelsrud2019moving} a.k.a. "lift-and-shift" have emerged around benefits of moving workloads to the cloud that have resulted in higher operational costs with little to no improvement in resiliency.}.  For example, it's still possible to deploy an application to a single virtual machine instance in the cloud, which will not elastically scale, nor will it be resilient to failure.  Thus, to enable the creation of cloud services software engineers must have mastery of newer patterns for distributed applications (\em{e.g.,} asynchronous event-based architectures).
+	
+	\item 
+\end{itemize}
 
 
-v
+Within a ge
+Although terminology In the early days of the cloud the boundaries of where the cloud started and ended were clear. Cloud providers provided multiple clustered datacenters, often called Availability Zones (AZ), and  
 
-
-v
-
-vv
-
-vv
-vv
-
-
+The physical architecture of the cloud is materially different from what students are exposed to in a traditional computer science or software engineering program.  Figure \ref{fig:CloudTopo}.
 
 \begin{figure*}[t!]
 	\includegraphics[width=\textwidth]{images/CloudTopo2.pdf}	
 	\caption{Cloud Compute - From Big to Small}
+	\label{fig:CloudTopo}
 \end{figure*}
 
 \section{Software Architecture Requirements}
