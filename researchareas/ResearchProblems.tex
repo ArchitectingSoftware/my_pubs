@@ -6,7 +6,8 @@
 \usepackage{graphicx}
 \usepackage{textcomp}
 \usepackage{xcolor}
-\usepackage{hyperref
+\usepackage{url}
+%\usepackage{hyperref}
 %\usepackage{latex8}
 %\usepackage{times}
 %\pagestyle{empty}
@@ -15,7 +16,7 @@
 %    T\kern-.1667em\lower.7ex\hbox{E}\kern-.125emX}}
     
 \bibliographystyle{IEEEtran}
-\graphicspath{./imaages/}
+\graphicspath{./images/}
 
 \newcommand{\mq}{\mbox{\em MQ}}
 
@@ -47,32 +48,26 @@ Since the mid 2010's we have seen significant shifting of traditional brick-and-
 
 It seems while everybody is embracing the cloud computing model, little attention has been paid to ways that mature software engineering practices needed to move to this new computing model at scale. Early successes by technology startups, or by industry moving their existing suite of web and mobile services over to the cloud are now being followed with ambitious plans to move more of their core business to the cloud, and to innovate new products and services that could only be delivered in the cloud.
 
-While there is a significant research activity in many areas of cloud computing, little attention has been paid to advancing software engineering practices needed for this .  This paper will focus on the landscape of Cloud Native Software Engineering from a practitioners standpoint, and  identify some opportunities in this space that should be investigated by the research community.
+While there is a significant research activity in many areas of cloud computing, little attention has been paid to advancing software engineering practices needed to support the next generation of cloud native applications.  By cloud native, we mean software that is designed and built assuming that it will be deployed on cloud infrastructure. This paper will focus on the landscape of Cloud Native Software Engineering from a practitioners standpoint, and  identify some opportunities in this space that should be investigated by the research community.
 \end{abstract}  
 
 
 
 \section{Introduction}
 \label{Intro}
+
 Delivering managed computing services via hosted infrastructure stared in the late 1990's with the introduction of the Software as a Service (SaaS) model. One of the earliest examples of this new model is Salesforce.com, that launched in 1999\cite{SalesforceHistory}.  Salesforce offered a best-in-class customer relationship management (CRM) suite, but its software was not as disruptive as its delivery model. Unlike other competitors that licensed software that executed using on premise equipment, Salesforce pioneered the pay-as-you-go SaaS subscription model. In this model, you simply pay a monthly per-user charge and can access the solution from any device at any time.     
 
-While SaaS solutions marked the start of shifting software spend to usage-based spend, cloud computing as we know it today can be attributed to the launch of AWS (Amazon) \cite{AWSLaunch} in early 2006, with Azure (Microsoft)\cite{AzureLaunch} and GCP (Google)\cite{GCPLaunch} following in 2008. Early adopters of cloud infrastructure were technology companies that innovated patterns, practices, and open sourced many tools and frameworks necessary to run resilient and scalable business services in the public cloud.  
+While SaaS solutions marked the start of shifting software spend to usage-based spend, cloud computing as we know it today can be attributed to the launch of AWS (Amazon) \cite{AWSLaunch} in early 2006, with Azure (Microsoft)\cite{AzureLaunch} and GCP (Google)\cite{GCPLaunch} following in 2008. Early adopters of cloud infrastructure were technology companies that innovated patterns, practices, and open sourced many tools and frameworks that have become best practices for running resilient and scalable business services in the public cloud.  
 
-Larry Wall, the creator of Perl, is credited with a quote that has become a popular software engineering meme.  
+Larry Wall, the creator of Perl, is credited with a quote that has become a popular software engineering meme -- \textit{"Good. Fast. Cheap. Pick two."}.  There is some empirical merit to this insight given software engineering is a rooted in making informed tradeoffs.  It's been less than 20 years since the reality of "compute as a utility" provided by the cloud, and the universal acceptance of integrating open source software into commercial applications. For example, better software can loosely be defined as software that meets its documented requirements with as few defects as possible.  Prior to the ability to distribute and patch software over the internet, significant defects required expensive measures to address.  Software providers would need to create updates and ship them to all of their customers using physical media such as disks, tapes or CD/DVD media.  We see these complex and costly defect management techniques in other industries such as managing automotive recalls. Given these challenges, extensive governance over feature scope and aggressive correctness testing were needed to avoid these emergency patches.  Delivering faster is often treated as compromising quality in order to maximize features. Optimizing around cost generally drove tradeoffs in areas such as being able to run on existing infrastructure, minimizing scope, or minimizing testing as the effort to patch defects became simpler. 
 
-\begin{figure}[h]
-	\includegraphics[width=\columnwidth]{images/better-faster-cheaper}	
-	%\caption{Software Engineering Meme}
-	\label{fig:BetterFasterCheaper}
-\end{figure}
-\vspace{-2em}
-
-\noindent 
-There is some merit to this insight given engineering is a rooted in making informed tradeoffs.  
+While the innovations associated with the cloud and open source software have undoubtedly advanced the software profession, traditional software engineering practices have been slow to evolve.  We think there is significant opportunity to evolve the state of the art in software engineering given that most industrial systems moving forward will be deployed on cloud runtimes\footnote{By cloud runtime we include public, private and hybrid cloud infrastructure}. 
 
 \section{What is Cloud Native Computing?}
 \label{sec:WhatIsCNF}
-Before we explore the software engineering landscape for the cloud, we need to address exactly what we mean by cloud native computing.  According to the Cloud Native Computing Foundation (CNCF)\cite{CNCFHome}  \textit{"Cloud native technologies empower organizations to build and run scalable applications in modern, dynamic environments such as public, private, and hybrid clouds."}.  Amazon's definition is \textit{"Cloud native technologies empower organizations to build and run scalable applications in modern, dynamic environments such as public, private, and hybrid clouds"}. Google offers the definition \textit{"Cloud native means adapting to the many new possibilities—but very different set of architectural constraints—offered by the cloud compared to traditional on-premises infrastructure."}.  The primary theme in these definitions centers around the role that technologies play in enabling the creation of cloud native applications.
+
+Before we explore the software engineering landscape for the cloud, we need to address exactly what we mean by cloud native computing.  According to the Cloud Native Computing Foundation (CNCF)\cite{CNCFHome}  \textit{"Cloud native technologies empower organizations to build and run scalable applications in modern, dynamic environments such as public, private, and hybrid clouds."}.  Amazon's definition is \textit{"Cloud native technologies empower organizations to build and run scalable applications in modern, dynamic environments such as public, private, and hybrid clouds"}. Google offers the definition \textit{"Cloud native means adapting to the many new possibilities—but very different set of architectural constraints—offered by the cloud compared to traditional on-premises infrastructure."}.  The primary theme in these definitions centers around the role that technologies play in enabling the creation of cloud native applications.  They also don't clearly define "Cloud Native", which we consider any application that is specifically designed to be deployed to a cloud platform. 
 
 We think a better definition of cloud native computing that focuses more on  software engineering is \textit{"Cloud native applications are well architected systems, that are "container" packaged, and dynamically managed"}. Specifically:
 
@@ -101,6 +96,7 @@ Now that we have provided a definition, there are a number of interesting softwa
 The infrastructure architecture that the major cloud providers offer to their customers continues to expand and evolve.  These advancements provide significant innovation capabilities to their customers, but also put pressure on how to effectively engineer solutions that take advantage of these services cost effectively.  Figure \ref{fig:CloudTopo} shows the high level view of the modern cloud.  While it was once easy to identify the boundary of where the cloud started and ended, it is no longer easy to define the edge of the cloud.  The following sections will provide an overview of the evolution of the cloud, along with highlighting some of the challenges that have to be overcome by software engineers to effectively use cloud computing services in their products.
 
 \subsection{Foundational Cloud Architecture}
+
 The basic cloud architecture topology deployed by the major providers exhibit a lot of similarities\footnote{It should be noted that the terminology used by the major cloud providers differs slightly for things like availability zones and regions.}.  The foundational building block of cloud compute is often called an \textbf{Availability Zone} (AZ).  An AZ is a data center that hosts cloud infrastructure (compute, storage, and network) and runs cloud provider services.  A \textbf{Region} is a physical location where a collection of 2 or more AZs are located.  Each AZ within a region are connected together with a fully redundant high bandwidth low latency network.  The goal of a region is to have AZs close enough so that they can behave like a single cluster, but also separate them by enough distance to isolate them from issues associated with power failure, earthquakes, tornados, and so on.  AWS, as an example, uses the general guideline of 100km (60 miles)\cite{AWS-AZ} for placing AZs within a region. The global footprint of a cloud provider is defined by the number of regions and locations they have across the globe, along with the purpose-built underlying network they use to interconnect them together. The far right side of Figure \ref{fig:CloudTopo} shows where Regions and AZs fit into the modern cloud architecture.
 
 The Region/AZ architecture, coupled with a pay-as-you-go model, offered services, scale and financial benefits that disrupted compute.  The largest companies in the world do not want to be in the business of managing a global network of interconnected data centers. For smaller companies and individual entrepreneurs, this model enabled them to have access to compute resources once only available to large enterprises, for zero up front cost.  One could easily argue that cloud computing was largely responsible for the explosion in startup companies over the past 15-20 years. 
@@ -115,7 +111,7 @@ From a software engineering perspective, the basic cloud architecture introduces
 	\item Although the cloud itself provides an infrastructure model to create resilient solutions that run at scale, its up to the software engineer to build things properly to take advantage of these capabilities\footnote{Some patterns such as rehosting\cite{engelsrud2019moving} {\em a.k.a.} "lift-and-shift" have emerged that contrast the benefits of moving workloads to the cloud with unplanned for consequences such as higher operational costs and little to no improvement in resiliency.}.  For example, it's still possible to deploy an application to a single virtual machine instance in the cloud, which will not elastically scale, nor will it be resilient to failure.  Thus, to enable the creation of cloud services software engineers must have mastery of newer patterns for distributed applications ( {\em e.g.}, asynchronous event-based architectures).
 	
 	\item One clear benefit of deploying to the cloud is that the easiest path to do so requires everything to be automated. 
-	\item 
+	
 \end{itemize}
 
 
@@ -129,7 +125,20 @@ As cloud providers expand their footprint across the globe, creating new regions
 
 In many cases, new regions are not required, but cloud applications continue to push for better performance, which in many cases needs to be achieved via providing lower latency.  Approaches to lower latency have been deployed before the modern cloud with content delivery network (CDN)\cite{CDN} solutions. 
 
-\subsection{The edge of the cloud disappears}
+\section{Cloud Native Requires Embracing "Polyglot"}
+Underlying HW runtime diversity, Microcontrollers, etc
+\subsection{Polyglot Programming}
+blah
+
+\subsection{Polyglot Databases}
+blah
+
+\subsection{Polyglot Hardware}
+blah
+Docker - AMD and ARM
+AWS - Graviton
+Edge Computing - Microcontrollers - Go/Rust
+
 
 \section{Software Architecture Requirements}
 \label{sec:SoftwareArchitecture}
