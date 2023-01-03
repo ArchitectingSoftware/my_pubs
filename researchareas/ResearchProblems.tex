@@ -56,7 +56,7 @@ While there is a significant research activity in many areas of cloud computing,
 \section{Introduction}
 \label{Intro}
 
-Delivering managed computing services via hosted infrastructure stared in the late 1990's with the introduction of the Software as a Service (SaaS) model. One of the earliest examples of this model is Salesforce.com, launched in 1999\cite{SalesforceHistory}.  Unlike other companies that licensed software that deployed to on premise equipment, Salesforce was an early pioneer of the the pay-as-you-go SaaS subscription model. In this model, you pay a monthly per-user charge and can access the solution from any device at any time.     
+Delivering managed computing services via hosted infrastructure stared in the late 1990's with the introduction of the Software as a Service (SaaS) model. One of the early pioneers of this model is Salesforce.com, launched in 1999\cite{SalesforceHistory}.  Unlike other companies that licensed software that deployed to on premise equipment, Salesforce provides a pay-as-you-go SaaS subscription model. In this model, they manage all of the software and compute, you pay a monthly per-user charge that can access the solution from any device at any time.     
 
 While SaaS solutions marked the start of shifting software license spend to usage-based spend, cloud computing as we know it today can be attributed to the launch of AWS (Amazon) \cite{AWSLaunch} in early 2006, with Azure (Microsoft)\cite{AzureLaunch} and GCP (Google)\cite{GCPLaunch} following in 2008. The primary early adopters of cloud computing were technology companies that innovated patterns, practices, and open sourced many tools and frameworks that have become best practices for running resilient and scalable business services in the public cloud.  It's probably been less than 10 years, but now we see acceptance of cloud computing in companies of all sizes across many different industries. 
 
@@ -64,13 +64,17 @@ Larry Wall, the creator of Perl, is credited with a quote that has become a popu
 
 This combination of capabilities enables software engineers to rapidly deploy software to a known state at any time. With these building blocks new well-tested features can be quickly and consistently rolled out to users in very small batches.  Goodness of the solution can now be validated via feedback from users, either directly, or via monitoring and instrumentation of their behavior.  These cloud enabled capabilities have the potential to advanced software engineering practices in many ways, but transforming these practices across the entire community will be challenging. We think this represents a significant opportunity for the software engineering field given the likelihood that most industrial systems moving forward will be deployed on cloud runtimes\footnote{By cloud runtime we include public, private and hybrid cloud infrastructure}. Specifically:
 
-\begin{itemize}
+\begin{enumerate}
 	\item Helping Software Engineers manage the expanded cognitive required to design, build and deploy at scale cloud applications. We will discuss this throughout the remaining sections of this paper. 
-	\item Identify opportunities to accelerate and scale software engineering skillsets needed for the cloud. Many industries will strive to move beyond deploying e-commerce applications to the cloud with their top engineers. This will require developing new skills for the broader engineering organization.
-	\item Investigate how software engineering and computer science education can expand to address the needs of industry in creating cloud-ready software engineering professionals. Most cloud-proficient software engineers build their skillsets on the job versus in formalized academic programs. 
-\end{itemize}
+	
+	\item Identify opportunities to accelerate and scale software engineering skillsets needed to deploy a broader suite of applications the cloud. Many industries will strive to move beyond deploying externally facing web and mobile applications to the cloud using their top engineers. This will require developing new skills for the broader engineering organization as more of their core business processing moves to the cloud.
+	
+	\item Investigate how software engineering and computer science education can expand to address the demands of industry to create new, and retooling existing software engineers for the cloud.\footnote{We will talk about cloud certifications later, but they are targeted towards using the services of a cloud provider, not designing cloud native applications} Most cloud-proficient software engineers build their skillsets on the job versus in formalized academic programs. 
+	
+	\item Understand software engineering needs for new architectures enabled by the cloud.  For example, IoT and smart devices that run at the edge increase the complexity of software engineering given the increasing distributed nature of these solutions.  These challenges will be discussed in a later section of this paper
+\end{enumerate}
 
-In the next section we will start by providing a definition for cloud native computing. Subsequent sections will build on trends in cloud native computing that we think will impact software engineering practices.  By cloud native, we are referring to systems designed specifically to be run on modern cloud infrastructure services, and not systems that are \textit{lifted and shifted}\cite{CloudMigration2017} from an on premise virtual machine to a virtual machine that runs in the cloud. 
+In the next section we start by providing a definition for cloud native computing. Subsequent sections will build on trends in cloud native computing that we think will impact software engineering practices.  Throughout this paper, by cloud native, we are referring to systems designed specifically to favor managed cloud platform services (PaaS/Faas)\cite{albuquerque2017function}, and not systems that are \textit{lifted and shifted}\cite{CloudMigration2017} from an on premise virtual machine to a virtual machine that runs in the cloud (IaaS). 
 
 
 \section{What is Cloud Native Computing?}
@@ -85,12 +89,21 @@ We think a better definition of cloud native computing that focuses more on  sof
 	
 	\item  \textbf{Container Packaged} - The term \textit{container} is overloaded in the cloud computing terminology landscape.  In many places its equated to a standardized package that is managed by Docker\cite{DockerContainer} technologies - aka "a docker container".  We take a more generic view of container packaging. Specifically, we think container packaging is a mechanism to package and deploy code that is ephemeral, can operate across a variety of different hardware architectures (e.g., Intel, ARM, etc), and at runtime is supervised.  Supervision includes full lifecycle management associated with version identification, startup, shutdown, health checks, and monitoring.  Examples of container packaging and supervision include Docker, Docker Compose, Kubernetes, and serverless \cite{baldini2017serverless}. We also include in this category the emerging popularity of using server-side web assembly\cite{haas2017bringing, bosshard2020use} as a way to package and deploy cloud native application services. 
 
-	\item \textbf{Dynamically Managed} - One interesting conceptual model for cloud computing is to consider the cloud as a large, highly distributed, special purpose operating system. Just like any operating system, there are a number of resource like storage, compute, network and security services that are needed by applications.  The job of an operating system is to dynamically manage and optimize the allocation of these resources to the realtime computing demand on the system.  When done well, every process being managed by the OS will perceive that it has access to the resources it needs, when it needs it.  In a similar context, a cloud service provider, via Application Programming Interfaces (APIs), provides and manages resources to cloud native applications dynamically. What is generally different is that an OS manages physical resources on a system, whereas cloud resources are generally virtualized and distributed, and to a large degree fault-tolerant.  For example, block storage that supports virtual machine reads and writes are automatically replicated across servers within an availability zone. Outside of initial configuration, the user does not worry about how durability is provided given its dynamically managed by the cloud service provider. 
+	\item \textbf{Dynamically Managed} - One interesting conceptual model for cloud computing is to consider the cloud as a large, highly distributed, special purpose operating system. Just like any operating system, there are a number of resource like storage, compute, network and security services that are needed by applications.  The job of an operating system is to dynamically manage and optimize the allocation of these resources to the realtime computing demand on the system.  When done well, every process being managed by the OS will perceive that it has access to the resources it needs, when it needs it.  In a similar context, a cloud service provider, via Application Programming Interfaces (APIs), provides and manages resources to cloud native applications dynamically. What is generally different is that an OS manages physical resources on a system, whereas cloud resources are generally virtualized and distributed, and to a large degree fault-tolerant.  For example, block storage that supports virtual machine reads and writes are automatically replicated across servers within an availability zone. Outside of initial configuration, the user does not worry about how durability is provided given its dynamically managed by the cloud service provider. Other examples include using auto scaling of virtual machines with health checks, or more advanced services like kubernetes\cite{kubernetes} that can scale up or down dynamically based on demand. Function as a service (FaaS) solution's take this a step further by configuring what code should be run when a certain event happens.     
 	
 	 
 \end{itemize} 
 
-Now that we have provided a definition, there are a number of interesting software engineering problems that should be considered. 
+Now that we have provided a definition, there are a number of interesting software engineering problems that should be considered.
+
+\begin{itemize}
+	\item \textit{Managing cloud native technical assets}.  In 2011 Adam Wiggins authored a set of technical principals that enable software engineers to create, manage and release code in support of cloud native applications. These principals were branded "The Twelve-Factor App"\cite{12factor}.  Over the years they were updated and revalidated\cite{hoffman2016beyond, 12factorRevisited}, but consistently hold up as recommended engineering practices. One of the key challenges is that while none of these practices is overly complex, they require mastery and discipline. Also, existing standards enforced by enterprises might act as blockers to some or all of these practices.  For example, some organizations might not have comfort or necessary controls to ensure that all deploys, to all environments are driven through the source code control system.
+	
+	\item \textit{Identifying an appropriate cloud native software architecture}.  The technical principals associated with 12 factor apps is a good start, however, these only focus on how to manage cloud native technical assets.  Good cloud native architectures are generally architected as a suite of horizontally composable components. This model introduces several interesting challenges for cloud native software engineers that must be addressed. What are these components? How do identify them? What will guide how they should be built? We think some of the newer concepts around app meshes\cite{GartnerMASA} and data meshes\cite{datamesh} provide a good start for shaping the overall architecture.  As far as identifying the architecture components themselves, we think concepts from Domain Driven Design (DDD)\cite{evans2004domain, vernon2013implementing} can be refreshed to support this activity.
+	
+	\item \textit{Organizing for success}.    Conways law, 2 pizza teams, devops skillset impedance mismatch
+	
+\end{itemize} 
 
 
 \section{The Architectural Span of the Cloud}
@@ -171,7 +184,8 @@ While the innovations associated with the cloud and open source software have un
 	\item Investigate how software engineering and computer science education can expand to address the needs of industry in creating cloud-ready software engineering professionals. 
 \end{itemize}
 
-
+\section{Acknowledgements}
+We would like to thank the following individuals for their valuable feedback to this paper. 
 
 \bibliography{CloudNative.bib}
 \end{document} 
