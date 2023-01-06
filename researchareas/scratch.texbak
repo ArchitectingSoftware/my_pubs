@@ -1,0 +1,29 @@
+Since the mid 2010's we have seen significant shifting of traditional brick-and-mortar businesses in adopting public cloud infrastructure.  Early skepticism about moving strategic business to the cloud on based on security or technical risk have been replaced with aggressive plans to migrate that is well supported by both technical professionals and senior management. In fact, IDC estimates that the overall worldwide cloud spend will almost double from \$706.6B in 2021 to \$1.3T by 2025\cite{IDCReport}.  
+
+
+However, we see little attention on ways that mature software engineering practices needed to move to this new computing model at scale. Early successes by technology startups, or by industry moving their existing suite of web and mobile services over to the cloud are now being followed with ambitious plans to move more of their core business to the cloud, and to innovate new products and services that could only be delivered in the cloud.
+
+While there is a significant research activity in many areas of cloud computing, little attention has been paid to advancing software engineering practices needed to support the next generation of cloud native applications.  By cloud native, we mean software that is designed and built from day one assuming it will be deployed to a cloud platform. This paper will focus on the landscape of Cloud Native Software Engineering from a practitioners standpoint, and  identify some opportunities that we think should be investigated by the research community.
+
+
+
+The Region/AZ architecture, coupled with a pay-as-you-go model, offered services, scale and financial benefits that disrupted compute.  The largest companies in the world do not want to be in the business of managing a global network of interconnected data centers. For smaller companies and individual entrepreneurs, this model enabled them to have access to compute resources once only available to large enterprises, for zero up front cost.  One could easily argue that cloud computing was largely responsible for the explosion in startup companies over the past 15-20 years. 
+
+
+
+\section{Temporary Stuff}
+It's been less than 20 years since the reality of "compute as a utility" provided by the cloud, and the universal acceptance of integrating open source software into commercial applications. With the cloud, and modern 
+
+For example, better software can loosely be defined as software that meets its documented requirements with as few defects as possible.  Prior to the ability to distribute and patch software over the internet, significant defects required expensive measures to address.  Software providers would need to create updates and ship them to all of their customers using physical media such as disks, tapes or CD/DVD media.  We see these complex and costly defect management techniques in other industries such as managing automotive recalls. Given these challenges, extensive governance over feature scope and aggressive correctness testing were needed to avoid these emergency patches.  Delivering faster is often treated as compromising quality in order to maximize features. Optimizing around cost generally drove tradeoffs in areas such as being able to run on existing infrastructure, minimizing scope, or minimizing testing as the effort to patch defects became simpler. 
+
+While the innovations associated with the cloud and open source software have undoubtedly advanced the software profession, traditional software engineering practices have been slow to evolve.  We think there is significant opportunity to evolve the state of the art in software engineering given the likelihood that most industrial systems moving forward will be deployed on cloud runtimes\footnote{By cloud runtime we include public, private and hybrid cloud infrastructure}. Specifically:
+
+\begin{itemize}
+	\item Helping Software Engineers manage the expanded cognitive required to design, build and deploy at scale cloud applications.
+	\item Identify opportunities to accelerate and scale software engineering skillsets needed for the cloud. Many industries will strive to move beyond deploying e-commerce applications to the cloud with their top engineers. This will require developing new skills for the broader engineering organization.
+	\item Investigate how software engineering and computer science education can expand to address the needs of industry in creating cloud-ready software engineering professionals. 
+\end{itemize}
+
+
+
+	\item \textit{Debunking Standardization, reuse and "tooling religion"}. The final observation we will make is that care is required with respect to carrying forward software engineering practices from the past into the cloud.  It is well understood that many non-software engineering disciplines have benefited from standardization. Consider a fastener used in a bridge.  Engineers benefit from standardization in that when they select a bolt to use in a structure, the properties of that bolt such as its thread, its materials, and its strength are well understood, predictable and interoperable. We think there are open research questions around the benefits and level of standardization with respect to creating software products.  At one time it was clear that there were benefits. For example, if an enterprise invested millions of dollars in deploying an Enterprise Java Application Server, it would be reasonable to expect its software engineers to standardize on the Java programming language, and select standard frameworks like Spring\cite{SpringFramework} and Hibernate that help drive productivity.	
