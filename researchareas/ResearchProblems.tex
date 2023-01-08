@@ -6,6 +6,7 @@
 \usepackage{graphicx}
 \usepackage{textcomp}
 \usepackage{xcolor}
+\usepackage{enumitem}
 \usepackage{url}
 %\usepackage{hyperref}
 %\usepackage{latex8}
@@ -17,6 +18,9 @@
     
 \bibliographystyle{IEEEtran}
 \graphicspath{./images/}
+
+\setlist[itemize]{leftmargin=*, itemsep= 1pt}
+
 
 \newcommand{\mq}{\mbox{\em MQ}}
 
@@ -127,6 +131,7 @@ Now that we have provided a definition, we describe next a number of interesting
 The underlying services that the major cloud providers offer to their customers continues to expand and evolve.  These advancements provide significant innovation capabilities to customers, but also put pressure on how to effectively engineer solutions that take advantage of these services cost effectively.  Figure \ref{fig:CloudTopo} shows the high level view of the modern cloud.  While it was once easy to identify the boundary of where the cloud started and ended, it is no longer easy to define the edge of the cloud.  The following sections will provide an overview of the evolution of the cloud, along with highlighting some of the challenges that have to be overcome by software engineers to effectively use cloud computing services in their products.
 
 \subsection{The Basic Cloud Architecture}
+\label{subsec:BasicCloudArchitecture}
 
 At a high level the basic cloud architectures deployed by major providers exhibit many similarities\footnote{It should be noted that the terminology used by the major cloud providers differs slightly for things like availability zones and regions.}.  The foundational infrastructure building block of cloud compute is called an \textbf{Availability Zone} (AZ).  An AZ is a data center that hosts cloud infrastructure (compute, storage, and network) and runs cloud provider services on behalf of their customers.  A \textbf{Region} is a physical location where a collection of 2 or more AZs are located.  Each AZ within a region are connected together with a fully redundant high bandwidth low latency network.  The goal of a region is to have AZs close enough so that they can behave like a single cluster, but also separate them by enough distance to isolate them from issues associated with power failure, earthquakes, tornados, and so on.  AWS, as an example, uses the general guideline of 100km (60 miles)\cite{AWS-AZ} for placing AZs within a region. The global footprint of a cloud provider is defined by the number of regions and locations they have across the globe, along with the purpose-built underlying network they use to interconnect them together. 
 
@@ -155,11 +160,11 @@ From a software engineering perspective, the basic cloud architecture described 
 With the rapid growth of devices that are connected to the internet, we are now entering the era of edge computing\cite{edgecomputing}. Edge computing is  different architecturally from traditional cloud computing.  Consider a cloud-enabled web or mobile application.  The architecture of these applications is often based on calling cloud-hosted APIs and then using the data returned from these to power the user experience.  This architecture will not scale or meet the needs of all of the smart devices that connect to the internet.  As its name implies, edge computing moves more computing services to the edge, with requirements not found in web or mobile applications:  Specifically:
 
 \begin{itemize}
-	\item They must be able to work autonomously. The cloud would not scale to support all device events, local processing is used to filter important events from less important events.
+	\item \vspace{-0.2cm}They must be able to work autonomously. The cloud would not scale to support all device events, local processing is used to filter important events from less important events.
 	
-	\item They must be able to work fully disconnected, or with unreliable network connectivity.  
+	\item \vspace{-0.2cm}They must be able to work fully disconnected, or with unreliable network connectivity.  
 	
-	\item They must be able to perform compute locally, either independently, or in local clusters. 
+	\item \vspace{-0.2cm}They must be able to perform compute locally, either independently, or in local clusters. 
 \end{itemize}
 
 These added capabilities basically extend the edge of the cloud all the way back to the client devices themselves as shown in Figure\ref{fig:CloudTopo}. The overall architecture of the modern cloud that extends to the edge is shown in Figure \ref{fig:EdgeArchitecture}\footnote{Figure copied from \url{https://www.spiceworks.com/tech/cloud/articles/edge-vs-fog-computing/}}.
@@ -205,23 +210,35 @@ We think an approach for programming language selection should be based on a car
 
 We think the approach used by Cordingly should be expanded to other cloud native architecture options.  For example, with container based solutions, languages like Java tend to produce very large containers, and require significant resources associated with bringing along the JVM.  Modern languages like Go, designed with the cloud in mind\footnote{Go is the primary language used to build significant cloud native platforms like Docker and Kubernetes}, produce very small containers, and has a robust and modern runtime.  Languages like Javascript and Typescript coupled with the Node.js runtime is highly optimized to support asynchronous event-based architectures. Languages like Rust provide C/C++ performance, but have a modern runtime and provide compiler-enforced memory safety. In addition to the languages themselves, additional factors such as the maturity and completeness of cloud provider supplied SDKs should also be considered in the selection criteria. 
 
-\subsection{Multi-Cloud}
-The major cloud providers run massive infrastructures that have historically have provided availability data that any individual enterprise would envy. However, while rare, cloud providers have had outages that have resulted in significant impact to customers. As cloud adoption continues to grow, the impact of these periodic outages will also continue to grow.  Additionally, the major cloud providers compete with each other via their innovation investments into fully managed services.  This has consequences of cloud vendor lock-in, making it hard for a customer to migrate from one cloud provider to another based on having to redevelop software 
+\subsection{Multi-Region and Multi-Cloud}
+The major cloud providers run massive infrastructures that have historically have provided availability that any individual enterprise would envy. However, while rare, cloud providers have had outages that have resulted in significant impact to customers. As cloud adoption continues to grow, the impact of these periodic outages will also continue to grow.  Additionally, the major cloud providers compete with each other via their innovation investments into fully managed services.  This has consequences of cloud vendor lock-in, making it hard for a customer to migrate from one cloud provider to another based on having to redevelop and redeploy their software on another providers platform.  Software engineers need to be well versed in the options and consequences from a cost and scale perspective with respect to making Multi-Region and Multi-Cloud decisions. For example: 
 
 \begin{itemize}
-	\item Moving from Single to Multi-Region
-	\item Diversifying services across multiple cloud providers
-	\item Being able to be multi-cloud, running 
+	\item As mentioned in Section \ref{subsec:BasicCloudArchitecture} cloud providers offer resiliency and scale using the concept of a Region comprised of multiple Availability Zones.  Most cloud providers handle the complexity of enabling services to run across AZs in a way that is transparent to customers.  Little engineering effort is required by customers to continue to operate correctly when a single AZ fails within a region.  However, if an entire region fails, additional engineering is required to continue correct operation. These efforts increase the complexity of the software, software testing, and cost as the customer becomes responsible for data replication strategies and redundant storage costs to operate across Regions. Netflix had authored engineering notes on the strategy that they use on their techblog\cite{NetflixMultiRegion}, and also created open source modules to perform chaos testing to validate their platforms ability to survive various types of failures. 
+	
+	\item While cloud providers offer many services that are foundational, they also compete by trying to differentiate their suite of fully managed services.  Software engineers can lower the blast radius of failures by diversifying services across different cloud providers.  For example, if a software engineer decided for their workloads that AWS has a superior FaaS solution with Lambda, and GCP has the best managed Kubernetes service GKE, consideration could be given to a best-of-breed strategy.  While this would reduce risk of individual cloud failure exposure, it also comes with risk and complexity.  Latency could suffer as intra-application calls have to leave one cloud and enter another.  Also, many cloud providers provide tiered pricing models, so maximizing use on one cloud provider drives the best discounts.  
+	
+	\item Expanding service to run across cloud providers and/or Regions involves additional software engineering focus to design applications that continue to operate with reduced function in the face of failure.  These tradeoffs would need careful consideration and be domain focused.  For example, on an e-commerce platform, favoring services that will allow customers to make and pay for orders can take precedent over the ability to fulfill orders until normal cloud operations are restored. 
+	
+	\item Being able to run applications across cloud providers, or to port to another cloud provider requires software engineers to make careful product selection decisions.  For example, consider AWS Dynamo and Azure Cosmos.  These are both database solutions that are often compared to each other with respect to hyper-scalability and performance.  From a software interface perspective they are very different and would require a significant rewrite to port from one solution to another.  Choosing an alternative technology like managed PostgreSQL for databases would be easier to support across different cloud providers.  Kubernetes is another example of a platform that will be more similar to support across different cloud providers.  In all cases, the processes to deploy and secure across different cloud providers will not be the same, so adopting a multi-cloud strategy, even with similar technologies will still introduce cost and complexity.
 \end{itemize}  
 
 \section{Cloud Computing Education}
+One opportunity we think requires additional investigation is additional software engineering specific cloud education.  Queries of Google Scholar\cite{GoogleScolar} for research on Cloud Native Software Engineering produce very few results of relevance.  Most of the results focus on work to advance specific areas of software engineering, for example, running AI/ML workloads, automation, software testing, or supporting microservice based architectures.  
 
+So how do software engineers learn cloud computing?  The cloud providers themselves have done a good job filling part of the need via education and certification programs.  Cloud certifications are highly valued by the industry and software engineers themselves, as they often post their certification accomplishments on personal LinkedIn pages. While cloud certifications are valuable, they focus on how to accomplish activities on a cloud platform versus how to engineer good software products using cloud services.  We have discussed FaaS as an important cloud software engineering opportunity earlier. Certifications would enable engineers to understand how to deploy a FaaS component on AWS Lambda, Azure Functions, or Google Cloud Functions, but they would not cover important other considerations such as is your solution event-driven, how will state be managed, SDK robustness, and so on.
+
+We think an important research question is to address if academic institutions can help address the educational needs of software engineers working in the cloud.  It appears that most of the collective knowledge in this space is acquired via on-the-job experience and via publications authored by industry on their engineering blogs describing techniques that they use to improve software engineering practices within their organization.  
 
 \section{Conclusion}
+In this paper we tried to draw attention to the need to place additional focus on expanding software engineering practices given the trend of moving to cloud and edge computing.  We examined many cloud computing architectural concepts from the lens of a software engineering practitioner and summarized many opportunities that would benefit the community. Many organizations transition to the cloud by taking their top engineers and focusing them on moving existing digital assets like web and mobile applications to the cloud.
 
+Early successes, coupled with the attractive technical capabilities liked by engineers, and a pay-as-you-go model liked by managers continue to drive acceleration of the cloud.  We think this next wave of cloud will require more software engineering rigor as we need to scale the number of qualified engineers to work in the cloud, while at the same time, needing to support moving core enterprise applications to the cloud that don't have the same architectural characteristics as digital applications. 
+
+We also discussed new business opportunities that could only emerge with the cloud such as API-based products, and edge computing.  These are complex architectures that will require software engineers to master additional skills.
 
 \section{Acknowledgements}
-We would like to thank the following individuals for their valuable feedback to this paper. 
+We would like to thank the following individuals for their valuable feedback to this paper. Your name can go here. 
 
 \bibliography{CloudNative.bib}
 \end{document} 
